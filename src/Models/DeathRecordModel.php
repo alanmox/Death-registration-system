@@ -106,7 +106,7 @@ final class DeathRecordModel extends BaseModel implements Crudable
                 deceased_name = ?, gender = ?, date_of_birth = ?, date_of_death = ?,
                 place_of_death = ?, cause_of_death = ?, hospital_name = ?, district = ?,
                 region = ?, applicant_name = ?, applicant_relationship = ?, applicant_contact = ?,
-                updated_at = datetime('now')
+                updated_at = NOW()
             WHERE id = ?
         ");
         return $stmt->execute([
@@ -127,7 +127,7 @@ final class DeathRecordModel extends BaseModel implements Crudable
     public function setStatus(int $id, string $status, int $approverId): bool
     {
         $stmt = $this->pdo->prepare("
-            UPDATE death_records SET status = ?, approved_by = ?, updated_at = datetime('now') WHERE id = ?
+            UPDATE death_records SET status = ?, approved_by = ?, updated_at = NOW() WHERE id = ?
         ");
         return $stmt->execute([$status, $approverId, $id]);
     }
@@ -167,7 +167,7 @@ final class DeathRecordModel extends BaseModel implements Crudable
     public function monthlyTrend(): array
     {
         $rows = $this->pdo->query("
-            SELECT strftime('%Y-%m', date_of_death) ym, COUNT(*) c
+            SELECT DATE_FORMAT(date_of_death, '%Y-%m') ym, COUNT(*) c
             FROM death_records GROUP BY ym ORDER BY ym DESC LIMIT 12
         ")->fetchAll();
         return array_reverse($rows);
