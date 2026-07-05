@@ -1,0 +1,17 @@
+DirectoryIndex index.php
+
+# Deny access to src directory
+<DirectoryMatch "^/.*/src/">
+    Require all denied
+</DirectoryMatch>
+
+<FilesMatch "\.(sqlite|sql|md)$">
+    Require all denied
+</FilesMatch>
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)$ index.php [QSA,L]
+</IfModule>

@@ -8,11 +8,18 @@ final class Database
 
     private function __construct()
     {
-        $host = getenv('DB_HOST') ?: '127.0.0.1';
-        $port = getenv('DB_PORT') ?: 3306;
-        $db   = getenv('DB_NAME') ?: 'death_registration';
-        $user = getenv('DB_USER') ?: 'root';
-        $pass = getenv('DB_PASS') ?: '';
+        // Load config file if present (created during deployment)
+        $config = [];
+        $configFile = __DIR__ . '/config.php';
+        if (file_exists($configFile)) {
+            $config = require $configFile;
+        }
+
+        $host = $config['DB_HOST'] ?? getenv('DB_HOST') ?: '127.0.0.1';
+        $port = $config['DB_PORT'] ?? getenv('DB_PORT') ?: 3306;
+        $db   = $config['DB_NAME'] ?? getenv('DB_NAME') ?: 'death_registration';
+        $user = $config['DB_USER'] ?? getenv('DB_USER') ?: 'death_reg_user';
+        $pass = $config['DB_PASS'] ?? getenv('DB_PASS') ?: 'Kibanda123';
 
         $dsn = "mysql:host={$host};port={$port};dbname={$db};charset=utf8mb4";
 
