@@ -21,19 +21,54 @@ final class UserModel extends BaseModel implements Crudable
         return $row ?: null;
     }
 
+    private function buildWhere(array $filters): array
+    {
+        $where = [];
+        $params = [];
+
+        if (!empty($filters['q'])) {
+            $where[] = "(username LIKE ? OR full_name LIKE ?)";
+            $like = '%' . $filters['q'] . '%';
+            array_push($params, $like, $like);
+        }
+        if (!empty($filters['role'])) {
+            $where[] = "role = ?";
+            $params[] = $filters['role'];
+        }
+        if (isset($filters['status']) && $filters['status'] !== '') {
+            $where[] = "is_active = ?";
+            $params[] = (int)$filters['status'];
+        }
+
+        $sql = $where ? ('WHERE ' . implode(' AND ', $where)) : '';
+        return [$sql, $params];
+    }
+
     public function all(array $filters = [], int $page = 1, int $perPage = 20): array
     {
+        [$whereSql, $params] = $this->buildWhere($filters);
         $offset = ($page - 1) * $perPage;
-        $stmt = $this->pdo->prepare("SELECT * FROM users ORDER BY id DESC LIMIT ? OFFSET ?");
-        $stmt->bindValue(1, $perPage, PDO::PARAM_INT);
-        $stmt->bindValue(2, $offset, PDO::PARAM_INT);
+        
+        $sql = "SELECT * FROM users $whereSql ORDER BY id DESC LIMIT ? OFFSET ?";
+        $stmt = $this->pdo->prepare($sql);
+        
+        $i = 1;
+        foreach ($params as $p) {
+            $stmt->bindValue($i++, $p);
+        }
+        $stmt->bindValue($i++, $perPage, PDO::PARAM_INT);
+        $stmt->bindValue($i++, $offset, PDO::PARAM_INT);
         $stmt->execute();
+        
         return $stmt->fetchAll();
     }
 
     public function count(array $filters = []): int
     {
-        return (int)$this->pdo->query("SELECT COUNT(*) c FROM users")->fetch()['c'];
+        [$whereSql, $params] = $this->buildWhere($filters);
+        $stmt = $this->pdo->prepare("SELECT COUNT(*) c FROM users $whereSql");
+        $stmt->execute($params);
+        return (int)$stmt->fetch()['c'];
     }
 
     public function create(array $data): int

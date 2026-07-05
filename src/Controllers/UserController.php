@@ -6,7 +6,20 @@ final class UserController
     public static function index(): string
     {
         $model = new UserModel();
-        $users = $model->all();
+        
+        $filters = [
+            'q' => trim($_GET['q'] ?? ''),
+            'role' => $_GET['role'] ?? '',
+            'status' => $_GET['status'] ?? '',
+        ];
+        
+        $page = max(1, (int)($_GET['p'] ?? 1));
+        $perPage = 10;
+        
+        $users = $model->all($filters, $page, $perPage);
+        $total = $model->count($filters);
+        $totalPages = max(1, (int)ceil($total / $perPage));
+
         $rows = '';
         $modals = '';
         $csrf = Csrf::field();
@@ -23,7 +36,7 @@ final class UserController
             $rows .= '<tr>'
                 . '<td>' . htmlspecialchars($u['username']) . '</td>'
                 . '<td>' . htmlspecialchars($u['full_name']) . '</td>'
-                . '<td>' . htmlspecialchars($u['role']) . '</td>'
+                . '<td>' . htmlspecialchars(ucwords(str_replace('_', ' ', $u['role']))) . '</td>'
                 . '<td>' . $statusBadge . '</td>'
                 . '<td>
                     <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editUserModal'.$id.'" title="Edit">
@@ -38,29 +51,79 @@ final class UserController
                    </td>'
                 . '</tr>';
 
-            // Edit Modal for each user
             $modals .= self::renderEditModal($u, $csrf);
         }
 
+        if (!$rows) {
+            $rows = '<tr><td colspan="5" class="text-center text-muted py-4">No users found matching your criteria.</td></tr>';
+        }
+
         $addUserModal = self::renderAddModal($csrf);
+        $pagination = self::renderPagination($page, $totalPages, $filters);
+        
+        // Search & Filter Form HTML
+        $qHtml = htmlspecialchars($filters['q']);
+        $roleOptions = '<option value="">All Roles</option>';
+        foreach (['registrar' => 'Registrar', 'hospital_officer' => 'Hospital Officer', 'data_entry_clerk' => 'Data Entry Clerk', 'auditor' => 'Auditor', 'super_admin' => 'Super Administrator'] as $val => $label) {
+            $sel = $filters['role'] === $val ? 'selected' : '';
+            $roleOptions .= "<option value=\"$val\" $sel>$label</option>";
+        }
+        $statusOptions = '<option value="">All Statuses</option>';
+        $statusOptions .= '<option value="1" '.($filters['status'] === '1' ? 'selected' : '').'>Active</option>';
+        $statusOptions .= '<option value="0" '.($filters['status'] === '0' ? 'selected' : '').'>Inactive</option>';
 
         $content = <<<HTML
 <div class="d-flex justify-content-between align-items-center mb-3">
   <h3><i class="bi bi-people"></i> User Management</h3>
   <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addUserModal"><i class="bi bi-person-plus"></i> Add New User</button>
 </div>
+
+<form method="get" action="" class="row g-2 mb-3">
+  <input type="hidden" name="page" value="users">
+  <div class="col-md-5">
+    <input type="text" name="q" value="{$qHtml}" class="form-control" placeholder="Search by username or full name...">
+  </div>
+  <div class="col-md-3">
+    <select name="role" class="form-select">{$roleOptions}</select>
+  </div>
+  <div class="col-md-2">
+    <select name="status" class="form-select">{$statusOptions}</select>
+  </div>
+  <div class="col-md-2">
+    <button type="submit" class="btn btn-primary w-100"><i class="bi bi-search"></i> Filter</button>
+  </div>
+</form>
+
 <div class="card card-stat p-3">
   <div class="table-responsive">
-    <table class="table table-hover align-middle">
+    <table class="table table-hover align-middle mb-0">
       <thead><tr><th>Username</th><th>Full Name</th><th>Role</th><th>Status</th><th>Actions</th></tr></thead>
       <tbody>{$rows}</tbody>
     </table>
   </div>
 </div>
+
+{$pagination}
 {$addUserModal}
 {$modals}
 HTML;
         return Layout::render('User Management', $content);
+    }
+
+    private static function renderPagination(int $page, int $totalPages, array $filters): string
+    {
+        if ($totalPages <= 1) return '';
+        $qsData = array_filter($filters, fn($v) => $v !== '');
+        $qs = http_build_query($qsData);
+        $qs = $qs ? '&' . $qs : '';
+        
+        $html = '<nav class="mt-4"><ul class="pagination justify-content-center">';
+        for ($i = 1; $i <= $totalPages; $i++) {
+            $active = $i === $page ? 'active' : '';
+            $html .= "<li class=\"page-item $active\"><a class=\"page-link\" href=\"?page=users&p={$i}{$qs}\">{$i}</a></li>";
+        }
+        $html .= '</ul></nav>';
+        return $html;
     }
 
     private static function renderAddModal(string $csrf): string
