@@ -58,6 +58,12 @@ final class UserModel extends BaseModel implements Crudable
         return $stmt->execute([$data['full_name'], $data['role'], $data['is_active'] ?? 1, $id]);
     }
 
+    public function toggleStatus(int $id, int $isActive): bool
+    {
+        $stmt = $this->pdo->prepare("UPDATE users SET is_active = ? WHERE id = ?");
+        return $stmt->execute([$isActive, $id]);
+    }
+
     public function delete(int $id): bool
     {
         $stmt = $this->pdo->prepare("DELETE FROM users WHERE id = ?");

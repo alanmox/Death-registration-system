@@ -84,6 +84,16 @@ final class Router
                 UserController::store();
                 return;
 
+            case 'users_update':
+                Auth::requirePermission('*');
+                UserController::update();
+                return;
+
+            case 'users_toggle':
+                Auth::requirePermission('*');
+                UserController::toggleStatus();
+                return;
+
             case 'audit':
                 Auth::requireLogin();
                 if (!Auth::can('audit.view') && !Auth::can('*')) {
