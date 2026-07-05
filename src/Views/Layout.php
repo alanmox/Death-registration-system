@@ -117,7 +117,7 @@ document.addEventListener('DOMContentLoaded',function(){ setTimeout(function(){ 
     public static function alert(string $type, string $message): string
     {
         return '<div class="alert alert-' . htmlspecialchars($type) . ' alert-dismissible fade show" role="alert">'
-            . htmlspecialchars($message)
+            . $message
             . '<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>';
     }
 }
