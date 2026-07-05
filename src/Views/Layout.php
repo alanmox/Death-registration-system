@@ -57,7 +57,7 @@ final class Layout
 </style>
 <script>
 function dismissFlash(btn){ var card=btn.closest('.flash-card'); card.classList.add('fade-out'); setTimeout(function(){ card.style.display='none'; if(!document.querySelector('.flash-card:not([style*=\"display: none\"])')){ document.getElementById('flash-container').style.display='none'; } },350); }
-document.addEventListener('DOMContentLoaded',function(){ setTimeout(function(){ document.querySelectorAll('.flash-card').forEach(function(c){ c.classList.add('fade-out'); setTimeout(function(){ c.style.display='none'; },350); }); },4000); });
+document.addEventListener('DOMContentLoaded',function(){ setTimeout(function(){ document.querySelectorAll('.flash-card').forEach(function(c){ c.classList.add('fade-out'); setTimeout(function(){ c.style.display='none'; },350); }); },2000); });
 </script>
 </head>
 <body>
