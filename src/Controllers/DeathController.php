@@ -235,6 +235,7 @@ HTML;
         $model = new DeathRecordModel();
         $id = $model->create($data);
         AuditLog::record(Auth::user()['id'], 'death_record_created', "Record #$id ({$data['deceased_name']})");
+        Flash::set('success', 'Death record created successfully.');
         header('Location: ?page=deaths_view&id=' . $id);
         exit;
     }
@@ -261,6 +262,7 @@ HTML;
         $model = new DeathRecordModel();
         $model->update($id, $data);
         AuditLog::record(Auth::user()['id'], 'death_record_updated', "Record #$id");
+        Flash::set('success', 'Death record updated successfully.');
         header('Location: ?page=deaths_view&id=' . $id);
         exit;
     }
@@ -284,6 +286,7 @@ HTML;
         $model = new DeathRecordModel();
         $model->delete($id);
         AuditLog::record(Auth::user()['id'], 'death_record_deleted', "Record #$id");
+        Flash::set('info', 'Death record deleted successfully.');
         header('Location: ?page=deaths');
         exit;
     }
@@ -406,6 +409,8 @@ HTML;
         $model = new DeathRecordModel();
         $model->setStatus($id, $status, Auth::user()['id']);
         AuditLog::record(Auth::user()['id'], 'death_status_changed', "Record #$id -> $status");
+        $label = $status === 'approved' ? 'approved' : 'rejected';
+        Flash::set('success', "Death record {$label} successfully.");
         header('Location: ?page=deaths_view&id=' . $id);
         exit;
     }

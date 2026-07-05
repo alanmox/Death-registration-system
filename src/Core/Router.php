@@ -94,6 +94,11 @@ final class Router
                 UserController::toggleStatus();
                 return;
 
+            case 'users_delete':
+                Auth::requirePermission('*');
+                UserController::delete();
+                return;
+
             case 'audit':
                 Auth::requireLogin();
                 if (!Auth::can('audit.view') && !Auth::can('*')) {

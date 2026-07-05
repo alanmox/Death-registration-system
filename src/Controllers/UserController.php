@@ -48,6 +48,11 @@ final class UserController
                         <input type="hidden" name="is_active" value="'.$newStatus.'">
                         <button type="submit" class="btn btn-sm '.$toggleBtnClass.'" title="'.$toggleTitle.'"><i class="bi '.$toggleIcon.'"></i></button>
                     </form>
+                    <form method="post" action="?page=users_delete" class="d-inline" onsubmit="return confirm(\'WARNING: Are you sure you want to PERMANENTLY delete this user? This action cannot be undone!\');">
+                        '.$csrf.'
+                        <input type="hidden" name="id" value="'.$id.'">
+                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete"><i class="bi bi-trash"></i></button>
+                    </form>
                    </td>'
                 . '</tr>';
 
@@ -255,6 +260,7 @@ HTML;
             'role' => $_POST['role'] ?? 'data_entry_clerk',
         ]);
         AuditLog::record(Auth::user()['id'], 'user_created', "Created user $username");
+        Flash::set('success', 'User created successfully.');
         header('Location: ?page=users');
         exit;
     }
@@ -300,6 +306,7 @@ HTML;
 
         $model->update($id, $data);
         AuditLog::record(Auth::user()['id'], 'user_updated', "Updated user ID $id");
+        Flash::set('success', 'User updated successfully.');
         header('Location: ?page=users');
         exit;
     }
@@ -323,7 +330,29 @@ HTML;
         
         $statusStr = $isActive ? 'activated' : 'deactivated';
         AuditLog::record(Auth::user()['id'], 'user_status_changed', "User ID $id was $statusStr");
+        Flash::set('success', "User {$statusStr} successfully.");
+        header('Location: ?page=users');
+        exit;
+    }
+
+    public static function delete(): void
+    {
+        if (!Csrf::verify($_POST['csrf_token'] ?? null)) {
+            exit('Invalid form submission.');
+        }
+
+        $id = (int)($_POST['id'] ?? 0);
+
+        if ($id === Auth::user()['id']) {
+            echo Layout::render('User Management', Layout::alert('danger', 'You cannot delete your own account.') . self::index());
+            return;
+        }
+
+        $model = new UserModel();
+        $model->delete($id);
         
+        AuditLog::record(Auth::user()['id'], 'user_deleted', "Permanently deleted User ID $id");
+        Flash::set('info', 'User deleted permanently.');
         header('Location: ?page=users');
         exit;
     }
