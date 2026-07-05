@@ -86,11 +86,8 @@ HTML;
     public static function login(): void
     {
         if (!Csrf::verify($_POST['csrf_token'] ?? null)) {
-            http_response_code(400);
-            echo Layout::render('Login',
-                Layout::alert('danger', 'Invalid or expired form submission. Please go back and try again.'),
-                false
-            );
+            Flash::set('danger', 'Invalid or expired form submission. Please try again.');
+            header('Location: ?page=login');
             return;
         }
 
@@ -99,10 +96,8 @@ HTML;
           ->required($_POST, 'password', 'Password');
 
         if (!$v->passes()) {
-            echo Layout::render('Login',
-                Layout::alert('warning', implode(' ', $v->errors())),
-                false
-            );
+            Flash::set('danger', implode(' ', $v->errors()));
+            header('Location: ?page=login');
             return;
         }
 
@@ -117,10 +112,9 @@ HTML;
             exit;
         }
 
-        echo Layout::render('Login',
-            Layout::alert('danger', htmlspecialchars($result['message'])),
-            false
-        );
+        Flash::set('danger', $result['message']);
+        header('Location: ?page=login');
+        exit;
     }
 
     public static function logout(): void
