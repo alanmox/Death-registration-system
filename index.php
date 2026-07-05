@@ -113,6 +113,7 @@ try {
 } catch (Throwable $e) {
     error_log($e->getMessage());
     http_response_code(500);
-    echo '<h3 style="font-family:sans-serif;color:#b00;">Something went wrong.</h3>'
-        . '<p style="font-family:sans-serif;">Please try again, or check the server error log for details.</p>';
+    echo '<h3 style="font-family:sans-serif;color:#b00;">Something went wrong.</h3>';
+    echo '<p><strong>Error:</strong> ' . htmlspecialchars($e->getMessage()) . '</p>';
+    echo '<pre>' . htmlspecialchars($e->getTraceAsString()) . '</pre>';
 }

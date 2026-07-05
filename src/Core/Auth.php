@@ -52,8 +52,8 @@ final class Auth
 
     public static function logout(): void
     {
-        if (self::check()) {
-            AuditLog::record(self::user()['id'], 'logout', '');
+        if (!empty($_SESSION['user']['id'])) {
+            AuditLog::record((int)$_SESSION['user']['id'], 'logout', '');
         }
         $_SESSION = [];
         session_destroy();
