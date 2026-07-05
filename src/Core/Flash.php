@@ -52,34 +52,37 @@ final class Flash
 @keyframes flashOut{ 0%{ opacity:1; transform:scale(1); } 100%{ opacity:0; transform:scale(.8) translateY(20px); } }
 </style>
 <script>
-function dismissFlash(btn) {
-  var card = btn.closest('.flash-card');
-  if (!card) return;
-  card.classList.add('fade-out');
-  card.style.pointerEvents = 'none';
-  setTimeout(function() {
-    card.remove();
-    var container = document.getElementById('flash-container');
-    if (container && container.querySelectorAll('.flash-card').length === 0) {
-      container.remove();
-    }
-  }, 350);
-}
-document.addEventListener('DOMContentLoaded', function() {
-  var cards = document.querySelectorAll('.flash-card');
-  if (cards.length === 0) return;
-  setTimeout(function() {
-    cards.forEach(function(card) {
-      card.classList.add('fade-out');
-      card.style.pointerEvents = 'none';
-      setTimeout(function() { card.remove(); }, 350);
+(function() {
+  function dismissCard(card) {
+    if (!card || card.classList.contains('fade-out')) return;
+    card.classList.add('fade-out');
+    card.style.pointerEvents = 'none';
+    setTimeout(function() {
+      card.remove();
+      var container = document.getElementById('flash-container');
+      if (container && container.querySelectorAll('.flash-card').length === 0) {
+        container.remove();
+      }
+    }, 350);
+  }
+  function initFlash() {
+    var cards = document.querySelectorAll('.flash-card');
+    if (cards.length === 0) return;
+    document.addEventListener('click', function(e) {
+      if (e.target && e.target.classList.contains('flash-close')) {
+        dismissCard(e.target.closest('.flash-card'));
+      }
     });
     setTimeout(function() {
-      var container = document.getElementById('flash-container');
-      if (container) container.remove();
-    }, 400);
-  }, 2500);
-});
+      cards.forEach(function(card) { dismissCard(card); });
+    }, 2500);
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initFlash);
+  } else {
+    initFlash();
+  }
+})();
 </script>
 HTML;
     }
@@ -109,7 +112,7 @@ HTML;
                     <div class="flash-title">' . htmlspecialchars(ucfirst($msg['type'])) . '</div>
                     <div class="flash-message">' . htmlspecialchars($msg['message']) . '</div>
                 </div>
-                <button class="flash-close" onclick="dismissFlash(this)">&times;</button>
+                <button class="flash-close">&times;</button>
             </div>';
         }
         $html .= '</div>';
