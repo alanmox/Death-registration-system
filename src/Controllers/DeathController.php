@@ -61,13 +61,13 @@ final class DeathController
 
 <form method="get" action="" class="row g-2 mb-3">
   <input type="hidden" name="page" value="deaths">
-  <div class="col-md-5">
+  <div class="col-12 col-sm-5">
     <input type="text" name="q" value="{$q}" class="form-control" placeholder="Search name, certificate no., applicant...">
   </div>
-  <div class="col-md-3">
+  <div class="col-6 col-sm-3">
     <select name="status" class="form-select">{$statusOptions}</select>
   </div>
-  <div class="col-md-2">
+  <div class="col-6 col-sm-2">
     <button class="btn btn-outline-primary w-100"><i class="bi bi-search"></i> Filter</button>
   </div>
 </form>

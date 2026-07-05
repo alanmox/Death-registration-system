@@ -85,16 +85,16 @@ final class UserController
 
 <form method="get" action="" class="row g-2 mb-3">
   <input type="hidden" name="page" value="users">
-  <div class="col-md-5">
+  <div class="col-12 col-sm-5">
     <input type="text" name="q" value="{$qHtml}" class="form-control" placeholder="Search by username or full name...">
   </div>
-  <div class="col-md-3">
+  <div class="col-6 col-sm-3">
     <select name="role" class="form-select">{$roleOptions}</select>
   </div>
-  <div class="col-md-2">
+  <div class="col-6 col-sm-2">
     <select name="status" class="form-select">{$statusOptions}</select>
   </div>
-  <div class="col-md-2">
+  <div class="col-6 col-sm-2">
     <button type="submit" class="btn btn-primary w-100"><i class="bi bi-search"></i> Filter</button>
   </div>
 </form>

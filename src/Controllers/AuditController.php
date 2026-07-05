@@ -64,23 +64,23 @@ final class AuditController
 <div class="card card-stat p-3 mb-4 shadow-sm border-0">
   <form method="get" action="" class="row g-2 align-items-end">
     <input type="hidden" name="page" value="audit">
-    <div class="col-md-3">
+    <div class="col-12 col-sm-6 col-md-3">
       <label class="form-label text-muted small fw-bold text-uppercase">Search</label>
       <input type="text" name="q" value="{$qHtml}" class="form-control" placeholder="Username, IP, or Details...">
     </div>
-    <div class="col-md-2">
+    <div class="col-6 col-sm-6 col-md-2">
       <label class="form-label text-muted small fw-bold text-uppercase">Action Type</label>
       <input type="text" name="action" value="{$actionHtml}" class="form-control" placeholder="e.g. login_success">
     </div>
-    <div class="col-md-2">
+    <div class="col-6 col-sm-4 col-md-2">
       <label class="form-label text-muted small fw-bold text-uppercase">Date From</label>
       <input type="date" name="date_from" value="{$dateFromHtml}" class="form-control">
     </div>
-    <div class="col-md-2">
+    <div class="col-6 col-sm-4 col-md-2">
       <label class="form-label text-muted small fw-bold text-uppercase">Date To</label>
       <input type="date" name="date_to" value="{$dateToHtml}" class="form-control">
     </div>
-    <div class="col-md-3">
+    <div class="col-6 col-sm-4 col-md-3">
       <button type="submit" class="btn btn-primary w-100"><i class="bi bi-search"></i> Filter Logs</button>
     </div>
   </form>

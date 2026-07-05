@@ -113,9 +113,9 @@ final class DashboardController
         }
 
         $content = <<<HTML
-<div class="d-flex justify-content-between align-items-center mb-4">
+<div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center mb-4 gap-2">
   <h3 class="mb-0"><i class="bi bi-speedometer2"></i> Dashboard</h3>
-  <div class="d-flex gap-2">
+  <div class="d-flex gap-2 flex-wrap">
     <form method="get" action="" class="d-flex">
       <input type="hidden" name="page" value="dashboard">
       <select name="period" class="form-select form-select-sm" onchange="this.form.submit()">
@@ -129,25 +129,25 @@ final class DashboardController
 {$alerts}
 
 <div class="row g-3 mb-4">
-  <div class="col-md-3">
+  <div class="col-6 col-md-3">
     <div class="card card-stat p-3">
       <div class="text-muted small">{$statLabelPre}Total Records</div>
       <div class="fs-3 fw-bold">{$total}</div>
     </div>
   </div>
-  <div class="col-md-3">
+  <div class="col-6 col-md-3">
     <div class="card card-stat p-3">
       <div class="text-muted small">{$statLabelPre}Pending Approval</div>
       <div class="fs-3 fw-bold text-warning">{$statusCounts['pending']}</div>
     </div>
   </div>
-  <div class="col-md-3">
+  <div class="col-6 col-md-3">
     <div class="card card-stat p-3">
       <div class="text-muted small">{$statLabelPre}Approved Certificates</div>
       <div class="fs-3 fw-bold text-success">{$statusCounts['approved']}</div>
     </div>
   </div>
-  <div class="col-md-3">
+  <div class="col-6 col-md-3">
     <div class="card card-stat p-3">
       <div class="text-muted small">{$statLabelPre}Rejected</div>
       <div class="fs-3 fw-bold text-danger">{$statusCounts['rejected']}</div>
@@ -156,13 +156,13 @@ final class DashboardController
 </div>
 
 <div class="row g-3 mb-4">
-  <div class="col-md-8">
+  <div class="col-12 col-md-8">
     <div class="card card-stat p-3">
       <div class="fw-semibold mb-2">{$statLabelPre}Monthly Registration Trend</div>
       <canvas id="trendChart" height="90"></canvas>
     </div>
   </div>
-  <div class="col-md-4">
+  <div class="col-12 col-md-4">
     <div class="card card-stat p-3">
       <div class="fw-semibold mb-2">{$statLabelPre}Gender Distribution</div>
       <canvas id="genderChart" height="90"></canvas>

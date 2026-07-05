@@ -109,54 +109,54 @@ final class ReportController
 <div class="card card-stat p-3 mb-4 shadow-sm border-0">
   <form method="get" action="" class="row g-3 align-items-end">
     <input type="hidden" name="page" value="reports">
-    <div class="col-md-3">
+    <div class="col-6 col-sm-6 col-md-3">
       <label class="form-label text-muted small fw-bold text-uppercase">Date of Death (From)</label>
       <input type="date" name="date_from" value="{$dateFromHtml}" class="form-control">
     </div>
-    <div class="col-md-3">
+    <div class="col-6 col-sm-6 col-md-3">
       <label class="form-label text-muted small fw-bold text-uppercase">Date of Death (To)</label>
       <input type="date" name="date_to" value="{$dateToHtml}" class="form-control">
     </div>
-    <div class="col-md-3">
+    <div class="col-6 col-sm-6 col-md-3">
       <label class="form-label text-muted small fw-bold text-uppercase">Approval Status</label>
       <select name="status" class="form-select">{$statusOptions}</select>
     </div>
-    <div class="col-md-3">
+    <div class="col-6 col-sm-6 col-md-3">
       <button type="submit" class="btn btn-primary w-100"><i class="bi bi-funnel"></i> Generate Report</button>
     </div>
   </form>
 </div>
 
-<div class="row g-4 mb-4">
-  <div class="col-md-3">
-    <div class="card card-stat p-4 text-center border-0 shadow-sm h-100">
+<div class="row g-3 mb-4">
+  <div class="col-6 col-md-3">
+    <div class="card card-stat p-3 text-center border-0 shadow-sm h-100">
       <div class="text-muted text-uppercase small fw-bold mb-2">Total Extracted</div>
-      <div class="display-5 fw-bolder text-dark">{$total}</div>
+      <div class="fs-3 fw-bolder text-dark">{$total}</div>
     </div>
   </div>
-  <div class="col-md-3">
-    <div class="card card-stat p-4 text-center border-0 shadow-sm h-100">
+  <div class="col-6 col-md-3">
+    <div class="card card-stat p-3 text-center border-0 shadow-sm h-100">
       <div class="text-muted text-uppercase small fw-bold mb-2">Approved</div>
-      <div class="display-5 fw-bolder text-success">{$statusCounts['approved']}</div>
+      <div class="fs-3 fw-bolder text-success">{$statusCounts['approved']}</div>
     </div>
   </div>
-  <div class="col-md-3">
-    <div class="card card-stat p-4 text-center border-0 shadow-sm h-100">
+  <div class="col-6 col-md-3">
+    <div class="card card-stat p-3 text-center border-0 shadow-sm h-100">
       <div class="text-muted text-uppercase small fw-bold mb-2">Pending Review</div>
-      <div class="display-5 fw-bolder text-warning">{$statusCounts['pending']}</div>
+      <div class="fs-3 fw-bolder text-warning">{$statusCounts['pending']}</div>
     </div>
   </div>
-  <div class="col-md-3">
-    <div class="card card-stat p-4 text-center border-0 shadow-sm h-100">
+  <div class="col-6 col-md-3">
+    <div class="card card-stat p-3 text-center border-0 shadow-sm h-100">
       <div class="text-muted text-uppercase small fw-bold mb-2">Rejected</div>
-      <div class="display-5 fw-bolder text-danger">{$statusCounts['rejected']}</div>
+      <div class="fs-3 fw-bolder text-danger">{$statusCounts['rejected']}</div>
     </div>
   </div>
 </div>
 
-<div class="row g-4 mb-4">
-  <div class="col-md-8">
-    <div class="card card-stat p-4 border-0 shadow-sm h-100">
+<div class="row g-3 mb-4">
+  <div class="col-12 col-md-8">
+    <div class="card card-stat p-3 border-0 shadow-sm h-100">
       <h5 class="fw-bold mb-4">Registrations by Region</h5>
       <canvas id="regionChart" height="80"></canvas>
       <div class="table-responsive mt-4">
@@ -167,14 +167,14 @@ final class ReportController
       </div>
     </div>
   </div>
-  <div class="col-md-4 d-flex flex-column gap-4">
-    <div class="card card-stat p-4 border-0 shadow-sm">
+  <div class="col-12 col-md-4 d-flex flex-column gap-3">
+    <div class="card card-stat p-3 border-0 shadow-sm">
       <h5 class="fw-bold mb-4">Top Causes of Death</h5>
       <ul class="list-group list-group-flush">
         {$causeHtml}
       </ul>
     </div>
-    <div class="card card-stat p-4 border-0 shadow-sm flex-grow-1">
+    <div class="card card-stat p-3 border-0 shadow-sm flex-grow-1">
       <h5 class="fw-bold mb-4">Gender Distribution</h5>
       <div style="max-width: 200px; margin: 0 auto;">
         <canvas id="reportGenderChart"></canvas>
