@@ -101,8 +101,51 @@ HTML;
             'info'    => 'bi-info-circle-fill',
         ];
 
-        $html = self::assets();
-        $html .= '<div id="flash-container">';
+        $html = '
+<style>
+  #flash-container{ position:fixed; top:20px; left:0; right:0; z-index:9999; display:flex; flex-direction:column; align-items:center; pointer-events:none; gap:10px; }
+  .flash-card{ pointer-events:auto; display:flex; align-items:center; gap:1rem; min-width:340px; max-width:480px; padding:1rem 1.25rem; border-radius:8px; box-shadow:0 4px 12px rgba(0,0,0,.15); animation:flashPop .3s ease forwards; position:relative; }
+  .flash-card.flash-success{ background:#d4edda; border-left:4px solid #28a745; color:#155724; }
+  .flash-card.flash-danger{ background:#f8d7da; border-left:4px solid #dc3545; color:#721c24; }
+  .flash-card.flash-warning{ background:#fff3cd; border-left:4px solid #ffc107; color:#856404; }
+  .flash-card.flash-info{ background:#d1ecf1; border-left:4px solid #17a2b8; color:#0c5460; }
+  .flash-icon{ font-size:1.5rem; line-height:1; }
+  .flash-body{ flex:1; }
+  .flash-title{ font-weight:700; font-size:.9rem; text-transform:uppercase; letter-spacing:.5px; margin-bottom:2px; }
+  .flash-message{ font-size:.9rem; }
+  .flash-close{ background:none; border:none; font-size:1.25rem; line-height:1; cursor:pointer; color:inherit; opacity:0.6; padding:0; align-self:flex-start; margin-top:2px; }
+  .flash-close:hover{ opacity:1; }
+  .flash-card.fade-out{ animation:flashOut .3s ease forwards; }
+  @keyframes flashPop{ 0%{ opacity:0; transform:translateY(-20px); } 100%{ opacity:1; transform:translateY(0); } }
+  @keyframes flashOut{ 0%{ opacity:1; transform:translateY(0); } 100%{ opacity:0; transform:translateY(-20px); } }
+</style>
+<script>
+if (typeof dismissFlash === "undefined") {
+  function dismissFlash(btn) {
+    var card = btn.closest(".flash-card");
+    if (!card) return;
+    card.classList.add("fade-out");
+    setTimeout(function() {
+      card.remove();
+      var container = document.getElementById("flash-container");
+      if (container && container.children.length === 0) container.remove();
+    }, 300);
+  }
+  document.addEventListener("DOMContentLoaded", function() {
+    setTimeout(function() {
+      document.querySelectorAll(".flash-card").forEach(function(card) {
+        card.classList.add("fade-out");
+        setTimeout(function() { card.remove(); }, 300);
+      });
+      setTimeout(function() {
+        var container = document.getElementById("flash-container");
+        if (container) container.remove();
+      }, 350);
+    }, 2500);
+  });
+}
+</script>
+<div id="flash-container">';
         foreach ($messages as $msg) {
             $type = htmlspecialchars($msg['type']);
             $icon = $icons[$msg['type']] ?? 'bi-info-circle-fill';
@@ -112,7 +155,7 @@ HTML;
                     <div class="flash-title">' . htmlspecialchars(ucfirst($msg['type'])) . '</div>
                     <div class="flash-message">' . htmlspecialchars($msg['message']) . '</div>
                 </div>
-                <button class="flash-close">&times;</button>
+                <button type="button" class="flash-close" onclick="dismissFlash(this)">&times;</button>
             </div>';
         }
         $html .= '</div>';
