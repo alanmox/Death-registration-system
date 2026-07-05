@@ -365,30 +365,186 @@ HTML;
 
     private static function certificateHtml(array $r): string
     {
-        $qrData = urlencode('CERT:' . $r['certificate_no']);
+        $qrData = urlencode('CERT:' . $r['certificate_no'] . '|NAME:' . $r['deceased_name']);
+        
+        $dob = $r['date_of_birth'] ? date('F j, Y', strtotime($r['date_of_birth'])) : 'N/A';
+        $dod = date('F j, Y', strtotime($r['date_of_death']));
+        $approvedDate = date('F j, Y'); // Since it's viewed, we could use the actual approval date if tracked, otherwise today is fine for printing
+        
         return <<<HTML
-<div class="certificate mb-3">
-  <div class="text-center mb-3">
-    <h4 class="mb-0">OFFICIAL CERTIFICATE OF DEATH</h4>
-    <small class="text-muted">Civil Registration Authority</small>
-  </div>
-  <hr>
-  <div class="row">
-    <div class="col-md-9">
-      <p>This is to certify that <b>{$r['deceased_name']}</b> ({$r['gender']}),
-      passed away on <b>{$r['date_of_death']}</b> at <b>{$r['place_of_death']}</b>,
-      {$r['district']}, {$r['region']}.</p>
-      <p><b>Cause of Death:</b> {$r['cause_of_death']}</p>
-      <p><b>Certificate Number:</b> {$r['certificate_no']}</p>
-      <p><b>Applicant:</b> {$r['applicant_name']} ({$r['applicant_relationship']})</p>
+<style>
+  .cert-wrapper {
+    background: #fff;
+    padding: 20px;
+    margin: 20px auto;
+    max-width: 900px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  }
+  .cert-border {
+    border: 10px solid #2c3e50;
+    padding: 10px;
+    position: relative;
+  }
+  .cert-inner {
+    border: 2px solid #2c3e50;
+    padding: 40px;
+    font-family: "Georgia", "Times New Roman", serif;
+    position: relative;
+    background-image: radial-gradient(circle at center, rgba(44, 62, 80, 0.03) 0, rgba(255,255,255,1) 100%);
+  }
+  .cert-header {
+    text-align: center;
+    margin-bottom: 30px;
+    border-bottom: 2px solid #2c3e50;
+    padding-bottom: 20px;
+  }
+  .cert-header h1 {
+    font-family: "Times New Roman", serif;
+    font-size: 32px;
+    font-weight: bold;
+    color: #2c3e50;
+    margin: 0;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  .cert-header h3 {
+    font-size: 18px;
+    font-weight: normal;
+    color: #555;
+    margin: 5px 0 0 0;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+  }
+  .cert-number {
+    position: absolute;
+    top: 40px;
+    right: 40px;
+    font-family: monospace;
+    font-size: 14px;
+    color: #e74c3c;
+    font-weight: bold;
+  }
+  .cert-body {
+    line-height: 1.8;
+    font-size: 16px;
+    color: #333;
+  }
+  .cert-data-row {
+    display: flex;
+    border-bottom: 1px dotted #ccc;
+    padding: 8px 0;
+  }
+  .cert-data-label {
+    flex: 0 0 35%;
+    font-weight: bold;
+    color: #2c3e50;
+    text-transform: uppercase;
+    font-size: 13px;
+    letter-spacing: 1px;
+  }
+  .cert-data-value {
+    flex: 1;
+    font-style: italic;
+    font-size: 18px;
+  }
+  .cert-footer {
+    margin-top: 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+  .signature-box {
+    text-align: center;
+    width: 250px;
+  }
+  .signature-line {
+    border-top: 1px solid #000;
+    margin-top: 40px;
+    padding-top: 5px;
+    font-weight: bold;
+    font-size: 14px;
+    text-transform: uppercase;
+  }
+  .qr-code {
+    border: 4px solid #fff;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  }
+  @media print {
+    body * { visibility: hidden; }
+    .cert-wrapper, .cert-wrapper * { visibility: visible; }
+    .cert-wrapper { position: absolute; left: 0; top: 0; margin: 0; padding: 0; box-shadow: none; width: 100%; }
+    .no-print { display: none !important; }
+  }
+</style>
+
+<div class="cert-wrapper">
+  <div class="cert-border">
+    <div class="cert-inner">
+      <div class="cert-number">No. {$r['certificate_no']}</div>
+      
+      <div class="cert-header">
+        <h1>Official Certificate of Death</h1>
+        <h3>Civil Registration Authority</h3>
+      </div>
+      
+      <div class="cert-body">
+        <p class="text-center mb-4" style="font-size: 18px;">
+          <i>This is to certify that the following information has been extracted from the official Register of Deaths.</i>
+        </p>
+        
+        <div class="cert-data-row">
+          <div class="cert-data-label">Full Name of Deceased</div>
+          <div class="cert-data-value fw-bold">{$r['deceased_name']}</div>
+        </div>
+        <div class="cert-data-row">
+          <div class="cert-data-label">Sex</div>
+          <div class="cert-data-value">{$r['gender']}</div>
+        </div>
+        <div class="cert-data-row">
+          <div class="cert-data-label">Date of Birth</div>
+          <div class="cert-data-value">{$dob}</div>
+        </div>
+        <div class="cert-data-row">
+          <div class="cert-data-label">Date of Death</div>
+          <div class="cert-data-value fw-bold">{$dod}</div>
+        </div>
+        <div class="cert-data-row">
+          <div class="cert-data-label">Place of Death</div>
+          <div class="cert-data-value">{$r['place_of_death']}</div>
+        </div>
+        <div class="cert-data-row">
+          <div class="cert-data-label">Cause of Death</div>
+          <div class="cert-data-value">{$r['cause_of_death']}</div>
+        </div>
+        <div class="cert-data-row">
+          <div class="cert-data-label">District / Region</div>
+          <div class="cert-data-value">{$r['district']}, {$r['region']}</div>
+        </div>
+        
+      </div>
+      
+      <div class="cert-footer">
+        <div class="qr-box text-center">
+          <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data={$qrData}" alt="QR verification code" class="qr-code">
+          <div style="font-family: monospace; font-size: 10px; margin-top: 5px; color: #777;">VERIFY-{$r['certificate_no']}</div>
+        </div>
+        
+        <div class="signature-box">
+          <div style="font-style: italic; font-family: 'Times New Roman'; font-size: 24px; color: #2c3e50; line-height: 10px;">
+            e-Approved
+          </div>
+          <div class="signature-line">
+            Registrar General<br>
+            <span style="font-size: 11px; font-weight: normal; text-transform: none;">Date: {$approvedDate}</span>
+          </div>
+        </div>
+      </div>
+      
     </div>
-    <div class="col-md-3 text-center">
-      <img src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data={$qrData}" alt="QR verification code" class="img-fluid">
-      <div class="small text-muted mt-1">Scan to verify</div>
-    </div>
   </div>
-  <div class="text-end mt-4 no-print">
-    <button class="btn btn-primary" onclick="window.print()"><i class="bi bi-printer"></i> Print Certificate</button>
+  
+  <div class="text-center mt-4 no-print">
+    <button class="btn btn-primary btn-lg px-5 shadow-sm" onclick="window.print()"><i class="bi bi-printer"></i> Print Official Certificate</button>
   </div>
 </div>
 HTML;
