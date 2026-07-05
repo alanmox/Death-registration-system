@@ -291,10 +291,12 @@ HTML;
     public static function view(int $id): string
     {
         $model = new DeathRecordModel();
-        $r = $model->find($id);
-        if (!$r) {
+        $raw = $model->find($id);
+        if (!$raw) {
             return Layout::render('Not Found', Layout::alert('warning', 'Record not found.'));
         }
+        
+        $r = array_map(fn($v) => is_string($v) ? htmlspecialchars($v, ENT_QUOTES, 'UTF-8') : $v, $raw);
         $badge = 'badge-status-' . $r['status'];
         $csrf = Csrf::field();
 

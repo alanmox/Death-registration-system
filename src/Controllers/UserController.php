@@ -58,6 +58,18 @@ HTML;
         if (!Csrf::verify($_POST['csrf_token'] ?? null)) {
             exit('Invalid form submission.');
         }
+        
+        $v = new Validator();
+        $v->required($_POST, 'username', 'Username')
+          ->required($_POST, 'full_name', 'Full Name')
+          ->required($_POST, 'password', 'Password')
+          ->required($_POST, 'role', 'Role');
+
+        if (!$v->passes()) {
+            echo Layout::render('User Management', Layout::alert('danger', implode(' ', $v->errors())) . self::index());
+            return;
+        }
+
         $model = new UserModel();
         $username = trim($_POST['username'] ?? '');
         $existing = $model->findByUsername($username);

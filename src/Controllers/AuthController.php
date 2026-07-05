@@ -68,16 +68,20 @@ HTML;
             return;
         }
 
-        $username = trim($_POST['username'] ?? '');
-        $password = $_POST['password'] ?? '';
+        $v = new Validator();
+        $v->required($_POST, 'username', 'Username')
+          ->required($_POST, 'password', 'Password');
 
-        if ($username === '' || $password === '') {
+        if (!$v->passes()) {
             echo Layout::render('Login',
-                Layout::alert('warning', 'Please enter both username and password.'),
+                Layout::alert('warning', implode(' ', $v->errors())),
                 false
             );
             return;
         }
+
+        $username = trim($_POST['username'] ?? '');
+        $password = $_POST['password'] ?? '';
 
         $result = Auth::attempt($username, $password);
 
