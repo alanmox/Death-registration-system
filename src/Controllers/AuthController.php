@@ -88,7 +88,7 @@ HTML;
         if (!Csrf::verify($_POST['csrf_token'] ?? null)) {
             Flash::set('danger', 'Invalid or expired form submission. Please try again.');
             header('Location: ?page=login');
-            return;
+            exit;
         }
 
         $v = new Validator();
@@ -98,15 +98,31 @@ HTML;
         if (!$v->passes()) {
             Flash::set('danger', implode(' ', $v->errors()));
             header('Location: ?page=login');
-            return;
+            exit;
         }
 
         $username = trim($_POST['username'] ?? '');
         $password = $_POST['password'] ?? '';
 
+        $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+        if (RateLimiter::exceeded('login', $ip)) {
+            $remaining = RateLimiter::remaining('login', $ip);
+            Flash::set('warning', "Too many login attempts. Please wait before trying again. ($remaining remaining)");
+            header('Location: ?page=login');
+            exit;
+        }
+
+        if (RateLimiter::exceeded('login', $username)) {
+            Flash::set('warning', 'This account has been temporarily locked due to too many attempts. Please try again later.');
+            header('Location: ?page=login');
+            exit;
+        }
+
         $result = Auth::attempt($username, $password);
 
         if ($result['ok']) {
+            RateLimiter::reset('login', $ip);
+            RateLimiter::reset('login', $username);
             Flash::set('success', 'Welcome back, ' . htmlspecialchars(Auth::user()['full_name']) . '!');
             header('Location: ?page=dashboard');
             exit;

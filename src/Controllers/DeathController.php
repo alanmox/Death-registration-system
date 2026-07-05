@@ -19,7 +19,7 @@ final class DeathController
 
         $rows = '';
         foreach ($records as $r) {
-            $badge = 'badge-status-' . $r['status'];
+            $badge = 'badge-status-' . htmlspecialchars($r['status']);
             $actions = '<a href="?page=deaths_view&id=' . (int)$r['id'] . '" class="btn btn-sm btn-outline-primary" title="View"><i class="bi bi-eye"></i></a> ';
             if (Auth::can('deaths.edit') || Auth::can('*')) {
                 $actions .= '<a href="?page=deaths_edit&id=' . (int)$r['id'] . '" class="btn btn-sm btn-outline-secondary" title="Edit"><i class="bi bi-pencil"></i></a> ';
@@ -138,9 +138,13 @@ HTML;
   {$csrf}
   {$idField}
   <div class="row g-3">
-    <div class="col-md-6">
+    <div class="col-md-5">
       <label class="form-label">Deceased Full Name *</label>
       <input type="text" name="deceased_name" class="form-control" value="{$g('deceased_name')}" required>
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">Passport / National ID</label>
+      <input type="text" name="passport_number" class="form-control" value="{$g('passport_number')}">
     </div>
     <div class="col-md-3">
       <label class="form-label">Gender *</label>
@@ -212,17 +216,26 @@ HTML;
         $data = self::sanitizeInput($_POST);
         $v = new Validator();
         $v->required($data, 'deceased_name', 'Deceased name')
+          ->maxLength($data, 'deceased_name', 'Deceased name', 200)
           ->required($data, 'gender', 'Gender')
+          ->allowedValues($data, 'gender', 'Gender', ['Male', 'Female', 'Other'])
           ->required($data, 'date_of_death', 'Date of death')
           ->date($data, 'date_of_death', 'Date of death')
           ->date($data, 'date_of_birth', 'Date of birth')
           ->required($data, 'place_of_death', 'Place of death')
+          ->maxLength($data, 'place_of_death', 'Place of death', 255)
           ->required($data, 'cause_of_death', 'Cause of death')
+          ->maxLength($data, 'cause_of_death', 'Cause of death', 500)
           ->required($data, 'district', 'District')
+          ->maxLength($data, 'district', 'District', 100)
           ->required($data, 'region', 'Region')
+          ->maxLength($data, 'region', 'Region', 100)
           ->required($data, 'applicant_name', 'Applicant name')
+          ->maxLength($data, 'applicant_name', 'Applicant name', 200)
           ->required($data, 'applicant_relationship', 'Relationship')
+          ->maxLength($data, 'applicant_relationship', 'Relationship', 100)
           ->required($data, 'applicant_contact', 'Applicant contact')
+          ->maxLength($data, 'applicant_contact', 'Applicant contact', 50)
           ->phone($data, 'applicant_contact', 'Applicant contact');
 
         if (!$v->passes()) {
@@ -247,10 +260,13 @@ HTML;
         $data = self::sanitizeInput($_POST);
         $v = new Validator();
         $v->required($data, 'deceased_name', 'Deceased name')
+          ->maxLength($data, 'deceased_name', 'Deceased name', 200)
           ->required($data, 'date_of_death', 'Date of death')
           ->date($data, 'date_of_death', 'Date of death')
           ->required($data, 'place_of_death', 'Place of death')
-          ->required($data, 'cause_of_death', 'Cause of death');
+          ->maxLength($data, 'place_of_death', 'Place of death', 255)
+          ->required($data, 'cause_of_death', 'Cause of death')
+          ->maxLength($data, 'cause_of_death', 'Cause of death', 500);
 
         if (!$v->passes()) {
             $errHtml = Layout::alert('danger', implode(' ', $v->errors()));
@@ -328,7 +344,7 @@ HTML;
 
         $content = <<<HTML
 <div class="d-flex justify-content-between align-items-center mb-3 no-print">
-  <h3><i class="bi bi-file-earmark-text"></i> Record #{$r['id']}</h3>
+  <h3><i class="bi bi-file-earmark-person"></i> Certificate No: {$r['certificate_no']}</h3>
   <div>
     <a href="?page=deaths" class="btn btn-outline-secondary">Back</a>
     {$approveButtons}
@@ -340,6 +356,7 @@ HTML;
     <div class="col-md-6">
       <p><b>Certificate No.:</b> {$r['certificate_no']}</p>
       <p><b>Deceased Name:</b> {$r['deceased_name']}</p>
+      <p><b>Passport / ID:</b> {$r['passport_number']}</p>
       <p><b>Gender:</b> {$r['gender']}</p>
       <p><b>Date of Birth:</b> {$r['date_of_birth']}</p>
       <p><b>Date of Death:</b> {$r['date_of_death']}</p>
@@ -497,6 +514,10 @@ HTML;
           <div class="cert-data-value fw-bold">{$r['deceased_name']}</div>
         </div>
         <div class="cert-data-row">
+          <div class="cert-data-label">Passport / ID Number</div>
+          <div class="cert-data-value">{$r['passport_number']}</div>
+        </div>
+        <div class="cert-data-row">
           <div class="cert-data-label">Sex</div>
           <div class="cert-data-value">{$r['gender']}</div>
         </div>
@@ -581,7 +602,7 @@ HTML;
 
     private static function sanitizeInput(array $data): array
     {
-        $fields = ['deceased_name','gender','date_of_birth','date_of_death','place_of_death',
+        $fields = ['deceased_name','passport_number','gender','date_of_birth','date_of_death','place_of_death',
             'cause_of_death','hospital_name','district','region','applicant_name',
             'applicant_relationship','applicant_contact'];
         $clean = [];

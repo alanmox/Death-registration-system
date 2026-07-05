@@ -84,13 +84,13 @@ final class DeathRecordModel extends BaseModel implements Crudable
         $certNo = $this->generateCertificateNumber();
         $stmt = $this->pdo->prepare("
             INSERT INTO death_records
-            (certificate_no, deceased_name, gender, date_of_birth, date_of_death, place_of_death,
+            (certificate_no, deceased_name, passport_number, gender, date_of_birth, date_of_death, place_of_death,
              cause_of_death, hospital_name, district, region, applicant_name, applicant_relationship,
              applicant_contact, status, registered_by)
-            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?, 'pending', ?)
+            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?, 'pending', ?)
         ");
         $stmt->execute([
-            $certNo, $data['deceased_name'], $data['gender'], $data['date_of_birth'] ?: null,
+            $certNo, $data['deceased_name'], $data['passport_number'] ?? null, $data['gender'], $data['date_of_birth'] ?: null,
             $data['date_of_death'], $data['place_of_death'], $data['cause_of_death'],
             $data['hospital_name'] ?: null, $data['district'], $data['region'],
             $data['applicant_name'], $data['applicant_relationship'], $data['applicant_contact'],
@@ -103,14 +103,14 @@ final class DeathRecordModel extends BaseModel implements Crudable
     {
         $stmt = $this->pdo->prepare("
             UPDATE death_records SET
-                deceased_name = ?, gender = ?, date_of_birth = ?, date_of_death = ?,
+                deceased_name = ?, passport_number = ?, gender = ?, date_of_birth = ?, date_of_death = ?,
                 place_of_death = ?, cause_of_death = ?, hospital_name = ?, district = ?,
                 region = ?, applicant_name = ?, applicant_relationship = ?, applicant_contact = ?,
                 updated_at = NOW()
             WHERE id = ?
         ");
         return $stmt->execute([
-            $data['deceased_name'], $data['gender'], $data['date_of_birth'] ?: null,
+            $data['deceased_name'], $data['passport_number'] ?? null, $data['gender'], $data['date_of_birth'] ?: null,
             $data['date_of_death'], $data['place_of_death'], $data['cause_of_death'],
             $data['hospital_name'] ?: null, $data['district'], $data['region'],
             $data['applicant_name'], $data['applicant_relationship'], $data['applicant_contact'],

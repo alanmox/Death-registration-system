@@ -5,7 +5,7 @@ final class Flash
 {
     public static function set(string $type, string $message): void
     {
-        $_SESSION['_flash'][] = ['type' => $type, 'message' => $message];
+        $_SESSION['_flash'] = [['type' => $type, 'message' => $message]];
     }
 
     public static function get(): array
@@ -36,11 +36,12 @@ final class Flash
 
         $html = '<div id="flash-container">';
         foreach ($messages as $msg) {
+            $type = htmlspecialchars($msg['type']);
             $icon = $icons[$msg['type']] ?? 'bi-info-circle-fill';
-            $html .= '<div class="flash-card flash-' . $msg['type'] . '">
+            $html .= '<div class="flash-card flash-' . $type . '">
                 <div class="flash-icon"><i class="bi ' . $icon . '"></i></div>
                 <div class="flash-body">
-                    <div class="flash-title">' . ucfirst($msg['type']) . '</div>
+                    <div class="flash-title">' . htmlspecialchars(ucfirst($msg['type'])) . '</div>
                     <div class="flash-message">' . htmlspecialchars($msg['message']) . '</div>
                 </div>
                 <button class="flash-close" onclick="dismissFlash(this)">&times;</button>

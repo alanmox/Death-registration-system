@@ -90,7 +90,7 @@ final class DashboardController
         if (Auth::can('deaths.approve') || Auth::can('*')) {
             $quickActions .= '<a href="?page=deaths&status=pending" class="btn btn-sm btn-warning me-2"><i class="bi bi-list-check"></i> Review Pending</a>';
             if ($statusCounts['pending'] > 0) {
-                $alerts .= Layout::alert('warning', '<i class="bi bi-exclamation-triangle"></i> You have <strong>' . $statusCounts['pending'] . '</strong> death registration(s) waiting for your approval.');
+                $alerts .= Layout::alert('warning', '<i class="bi bi-exclamation-triangle"></i> You have <strong>' . $statusCounts['pending'] . '</strong> death registration(s) waiting for your approval.', false);
             }
         }
         

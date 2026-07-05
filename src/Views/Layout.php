@@ -114,8 +114,11 @@ document.addEventListener('DOMContentLoaded',function(){ setTimeout(function(){ 
         return '<a class="' . $active . '" href="?page=' . $page . '"><i class="bi ' . $icon . ' me-2"></i>' . $label . '</a>';
     }
 
-    public static function alert(string $type, string $message): string
+    public static function alert(string $type, string $message, bool $escape = true): string
     {
+        if ($escape) {
+            $message = htmlspecialchars($message, ENT_QUOTES, 'UTF-8');
+        }
         return '<div class="alert alert-' . htmlspecialchars($type) . ' alert-dismissible fade show" role="alert">'
             . $message
             . '<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>';
