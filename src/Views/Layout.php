@@ -56,8 +56,30 @@ final class Layout
   @keyframes flashOut{ 0%{ opacity:1; transform:scale(1); } 100%{ opacity:0; transform:scale(.8) translateY(20px); } }
 </style>
 <script>
-function dismissFlash(btn){ var card=btn.closest('.flash-card'); card.classList.add('fade-out'); setTimeout(function(){ card.style.display='none'; if(!document.querySelector('.flash-card:not([style*=\"display: none\"])')){ document.getElementById('flash-container').style.display='none'; } },350); }
-document.addEventListener('DOMContentLoaded',function(){ setTimeout(function(){ document.querySelectorAll('.flash-card').forEach(function(c){ c.classList.add('fade-out'); setTimeout(function(){ c.style.display='none'; },350); }); },2000); });
+function dismissFlash(btn) {
+  var card = btn.closest('.flash-card');
+  if (!card) return;
+  card.classList.add('fade-out');
+  setTimeout(function() {
+    card.remove();
+    var container = document.getElementById('flash-container');
+    if (container && container.querySelectorAll('.flash-card').length === 0) {
+      container.remove();
+    }
+  }, 350);
+}
+document.addEventListener('DOMContentLoaded', function() {
+  setTimeout(function() {
+    document.querySelectorAll('.flash-card').forEach(function(card) {
+      card.classList.add('fade-out');
+      setTimeout(function() { card.remove(); }, 350);
+    });
+    setTimeout(function() {
+      var container = document.getElementById('flash-container');
+      if (container) container.remove();
+    }, 400);
+  }, 2500);
+});
 </script>
 </head>
 <body>
