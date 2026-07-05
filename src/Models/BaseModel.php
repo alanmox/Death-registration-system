@@ -10,4 +10,9 @@ abstract class BaseModel
     {
         $this->pdo = Database::getInstance()->pdo();
     }
+
+    public function pdo(): PDO
+    {
+        return $this->pdo;
+    }
 }
