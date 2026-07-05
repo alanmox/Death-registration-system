@@ -75,7 +75,7 @@ document.addEventListener('DOMContentLoaded',function(){ setTimeout(function(){ 
     <button type="submit" class="btn btn-brand w-100 py-2"><i class="bi bi-box-arrow-in-right me-2"></i>Sign In</button>
   </form>
   <div class="mt-3 text-center">
-    <small class="text-muted">Default: admin / Admin@123</small>
+    <small class="text-muted">Death Registration System v1.0</small>
   </div>
 </div>
 </body>
