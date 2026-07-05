@@ -126,7 +126,9 @@ HTML;
     public static function logout(): void
     {
         Auth::logout();
+        session_start();
         Flash::set('info', 'You have been logged out successfully.');
+        session_write_close();
         header('Location: ?page=login');
         exit;
     }
