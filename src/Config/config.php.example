@@ -1,0 +1,17 @@
+<?php
+/**
+ * Database configuration template.
+ *
+ * Setup:
+ *   cp src/Config/config.php.example src/Config/config.php
+ *
+ * Then edit config.php with your local MySQL credentials.
+ * config.php is gitignored and must never be committed.
+ */
+return [
+    'DB_HOST' => '127.0.0.1',
+    'DB_PORT' => 3306,
+    'DB_NAME' => 'death_registration',
+    'DB_USER' => 'root',
+    'DB_PASS' => '',
+];

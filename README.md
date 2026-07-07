@@ -151,14 +151,22 @@ cd death-registration-system
 
 ### 2. Database Configuration
 
-1. Create a new MySQL database named `death_registration`.
-2. Import the provided schema (if available) or rely on the core setup.
-3. The system is designed for production. Configure your environment variables on your server or update your local setup:
-   - `DB_HOST` (default: 127.0.0.1)
-   - `DB_PORT` (default: 3306)
-   - `DB_NAME` (default: death_registration)
-   - `DB_USER` (default: root)
-   - `DB_PASS` (default: empty)
+On first run, the app automatically creates the MySQL database, tables, and default users if they do not exist.
+
+Configure credentials using **one** of these methods:
+
+**Option A: Config file (recommended for local dev)**
+```bash
+cp src/Config/config.php.example src/Config/config.php
+```
+Edit `src/Config/config.php` with your MySQL credentials. This file is gitignored.
+
+**Option B: Environment variables**
+- `DB_HOST` (default: 127.0.0.1)
+- `DB_PORT` (default: 3306)
+- `DB_NAME` (default: death_registration)
+- `DB_USER` (default: root)
+- `DB_PASS` (default: empty)
 
 ### 3. Running the Application
 

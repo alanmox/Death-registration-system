@@ -1,0 +1,8 @@
+# Local database credentials (never commit)
+src/Config/config.php
+
+# Legacy SQLite file from older versions
+src/Config/death_registration.sqlite
+
+# Local/session artifacts
+cookies.txt
